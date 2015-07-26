@@ -1,0 +1,2 @@
+7/16/2015 6:39:29 AM: Year of each movie in parentheses is expected to appear on each movie's name. Directory will otherwise be ignored.
+7/16/2015 6:39:29 AM: Accurate Movie Name is expected for each directory. Movie will not be added otherwise.
