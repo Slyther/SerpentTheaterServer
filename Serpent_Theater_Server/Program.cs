@@ -29,10 +29,10 @@ namespace Serpent_Theater_Server
             {"removeFromMoviesDirectories", new Tuple<Action, string>(RemoveFromMoviesDirectories, "Removes specified directory from the movies directory list.")},
             {"listMoviesDirectories", new Tuple<Action, string>(ListMoviesDirectories, "Lists all known movies directories.")},
             {"addAllOrNewMovies", new Tuple<Action, string>(AddAllOrNewMovies, "Scans all movies directories to find and add all or any missing movies to the database.")},
-            {"testImage", new Tuple<Action, string>(testImage, "")}
+            {"testImage", new Tuple<Action, string>(TestImage, "")}
         };
 
-        private static void testImage()
+        private static void TestImage()
         {
             Movie movie;
             do
@@ -50,8 +50,8 @@ namespace Serpent_Theater_Server
                         {
                             path = Directory.GetParent(path).ToString();
                             var fileStream =
-                           new System.IO.FileStream(path + "\\Desktop\\" + movie.ImdbId +".jpg", System.IO.FileMode.Create,
-                                                    System.IO.FileAccess.Write);
+                           new FileStream(path + "\\Desktop\\" + movie.ImdbId +".jpg", FileMode.Create,
+                                                    FileAccess.Write);
                             fileStream.Write(poster, 0, poster.Length);
                             fileStream.Close();
                         }
