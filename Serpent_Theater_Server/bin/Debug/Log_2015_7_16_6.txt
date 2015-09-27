@@ -1,3 +1,0 @@
-7/16/2015 7:00:47 AM: Year of each movie in parentheses is expected to appear on each movie's name. Directory will otherwise be ignored.
-7/16/2015 7:00:47 AM: Accurate Movie Name is expected for each directory. Movie will not be added otherwise.
-7/16/2015 7:01:55 AM: Conflicting entries: Snatch (2000), Snatch. (2000)
