@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Serpent_Theater_Server.Utils
+namespace Utilities.Utils
 {
     public enum Verbosity
     {

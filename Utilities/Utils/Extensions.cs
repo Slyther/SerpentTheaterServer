@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace Serpent_Theater_Server.Utils
+namespace Utilities.Utils
 {
-    static class Extensions
+    public static class Extensions
     {
         public static byte[] ReadAllBytes(this BinaryReader reader)
         {

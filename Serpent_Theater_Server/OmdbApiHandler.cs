@@ -6,9 +6,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
-using Serpent_Theater_Server.Utils;
+using DatabaseDeployer.Database;
+using Utilities.Utils;
 
-namespace Serpent_Theater_Server.Database
+namespace Serpent_Theater_Server
 {
     public class OmdbApiHandler
     {
@@ -176,7 +177,7 @@ namespace Serpent_Theater_Server.Database
                     {
                         if (actor.Trim() == "")
                             continue;
-                        var act = _context.Actors.FirstOrDefault(x => x.Name == actor.Trim()) ?? new Actor
+                        var act = Queryable.FirstOrDefault<Actor>(_context.Actors, x => x.Name == actor.Trim()) ?? new Actor
                         {
                             Name = actor.Trim()
                         };
@@ -195,7 +196,7 @@ namespace Serpent_Theater_Server.Database
                     {
                         if (director.Trim() == "")
                             continue;
-                        var dir = _context.Directors.FirstOrDefault(x => x.Name == director.Trim()) ?? new Director
+                        var dir = Queryable.FirstOrDefault<Director>(_context.Directors, x => x.Name == director.Trim()) ?? new Director
                         {
                             Name = director.Trim()
                         };
@@ -214,7 +215,7 @@ namespace Serpent_Theater_Server.Database
                     {
                         if (writer.Trim() == "")
                             continue;
-                        var wri = _context.Writers.FirstOrDefault(x => x.Name == writer.Trim()) ?? new Writer
+                        var wri = Queryable.FirstOrDefault<Writer>(_context.Writers, x => x.Name == writer.Trim()) ?? new Writer
                         {
                             Name = writer.Trim()
                         };
@@ -231,7 +232,7 @@ namespace Serpent_Theater_Server.Database
                     var genresList = genresString.Split(',').ToList();
                     foreach (var genre in genresList)
                     {
-                        var gen = _context.Genres.FirstOrDefault(x => x.Name == genre.Trim()) ?? new Genre
+                        var gen = Queryable.FirstOrDefault<Genre>(_context.Genres, x => x.Name == genre.Trim()) ?? new Genre
                         {
                             Name = genre.Trim()
                         };

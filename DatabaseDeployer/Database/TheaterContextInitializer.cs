@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Serpent_Theater_Server.Database.Models;
+using DatabaseDeployer.Database.Models;
 
-namespace Serpent_Theater_Server.Database
+namespace DatabaseDeployer.Database
 {
     class TheaterContextInitializer
     {
@@ -48,10 +46,10 @@ namespace Serpent_Theater_Server.Database
             Context.SaveChanges();
             series.ShortPlot = "A very interesting plot!";
             Context.SaveChanges();
-            Context.Actors.Remove(Context.Actors.FirstOrDefault(x => x.Name == "Michael"));
-            Context.Episodes.Remove(Context.Episodes.FirstOrDefault(x => x.Title == "Test Title"));
-            Context.Seasons.Remove(Context.Seasons.FirstOrDefault(x => x.Name == "Season 1"));
-            Context.Series.Remove(Context.Series.FirstOrDefault(x => x.Title == "Some Series"));
+            Context.Actors.Remove(Queryable.FirstOrDefault<Actor>(Context.Actors, x => x.Name == "Michael"));
+            Context.Episodes.Remove(Queryable.FirstOrDefault<Episode>(Context.Episodes, x => x.Title == "Test Title"));
+            Context.Seasons.Remove(Queryable.FirstOrDefault<Season>(Context.Seasons, x => x.Name == "Season 1"));
+            Context.Series.Remove(Queryable.FirstOrDefault<Series>(Context.Series, x => x.Title == "Some Series"));
             Context.SaveChanges();
         }
     }

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using DatabaseDeployer.Database;
 using Microsoft.Win32;
-using Serpent_Theater_Server.Database;
 using Serpent_Theater_Server.FTP;
-using Serpent_Theater_Server.Utils;
+using Utilities.Utils;
 
 namespace Serpent_Theater_Server
 {
@@ -29,7 +30,7 @@ namespace Serpent_Theater_Server
             {"removeFromMoviesDirectories", new Tuple<Action, string>(RemoveFromMoviesDirectories, "Removes specified directory from the movies directory list.")},
             {"listMoviesDirectories", new Tuple<Action, string>(ListMoviesDirectories, "Lists all known movies directories.")},
             {"addAllOrNewMovies", new Tuple<Action, string>(AddAllOrNewMovies, "Scans all movies directories to find and add all or any missing movies to the database.")},
-            {"testImage", new Tuple<Action, string>(TestImage, "")}
+            {"testImage", new Tuple<Action, string>(TestImage, "Copies the selected movie's poster to the current user's desktop.")}
         };
 
         private static void TestImage()
@@ -59,7 +60,7 @@ namespace Serpent_Theater_Server
                     catch (Exception exception)
                     {
                         Console.WriteLine("Exception caught in process: {0}",
-                                          exception.ToString());
+                                          exception);
                     }
                 }
                 else
@@ -144,7 +145,7 @@ namespace Serpent_Theater_Server
         {
             Console.WriteLine(Environment.NewLine + @"List of Available Commands:" + Environment.NewLine);
             var commandsList = CommandsDictionary.Select(keyValuePair => new[] {keyValuePair.Key, "- "+keyValuePair.Value.Item2+"\n"}).ToList();
-            Console.WriteLine(Utilities.PadElementsInLines(commandsList));
+            Console.WriteLine(Utilities.Utils.Utilities.PadElementsInLines(commandsList));
         }
 
         private static void DisableAutoStartOnLogin()
@@ -169,10 +170,20 @@ namespace Serpent_Theater_Server
         private static void Main()
         {
             DoInitMessage();
+            BasicLogger.Log("example");
+            var directory = AppDomain.CurrentDomain.BaseDirectory + "Database";
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            AppDomain.CurrentDomain.SetData("DataDirectory", directory);
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<TheaterContext, DatabaseDeployer.Migrations.Configuration>());
             Context = new TheaterContext();
+            Context.Database.Initialize(true);
             Server = new FtpServer();
             InitializaServer();
             DisplayServerStatus();
+            
             while (true)
             {
                 PrintName();

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Serpent_Theater_Server.Database
+namespace DatabaseDeployer.Database
 {
     public class Season
     {

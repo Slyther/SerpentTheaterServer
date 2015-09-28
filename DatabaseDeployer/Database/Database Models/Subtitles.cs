@@ -1,6 +1,6 @@
-﻿using Serpent_Theater_Server.Database.Models;
+﻿using DatabaseDeployer.Database.Models;
 
-namespace Serpent_Theater_Server.Database
+namespace DatabaseDeployer.Database
 {
     public enum SubtitleLanguage
     {

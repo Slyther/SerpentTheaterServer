@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Serpent_Theater_Server.Database.Models;
-using Serpent_Theater_Server.Utils;
+using DatabaseDeployer.Database;
+using DatabaseDeployer.Database.Models;
+using Utilities.Utils;
 
-namespace Serpent_Theater_Server.Database
+namespace Serpent_Theater_Server
 {
     public class DatabaseBuilder
     {
@@ -69,7 +70,7 @@ namespace Serpent_Theater_Server.Database
                         name = name.Remove(name.LastIndexOf('(')).Trim();
                         year = year.Remove(year.IndexOf(')')).Trim();
                         name = name.Replace("310 to Yuma", "3:10 to Yuma"); //Hardcoded, can't figure out any other way. Unique case.
-                        var movie = _context.Movies.FirstOrDefault(x => x.Title == name && x.Year == year);
+                        var movie = Queryable.FirstOrDefault<Movie>(_context.Movies, x => x.Title == name && x.Year == year);
                         if (movie != null)
                         {
                             BasicLogger.Log("Conflicting entry: " + name + " (" + year + ")");
@@ -139,7 +140,7 @@ namespace Serpent_Theater_Server.Database
                             BasicLogger.Log("Something went wrong with: " + name + " (" + year + ")");
                             continue;
                         }
-                        movie = _context.Movies.FirstOrDefault(x => x.ImdbId == obtainedMovie.ImdbId);
+                        movie = Queryable.FirstOrDefault<Movie>(_context.Movies, x => x.ImdbId == obtainedMovie.ImdbId);
                         if (movie != null)
                         {
                             BasicLogger.Log("Conflicting entries: " + name + " (" + year + "), " + movie.Title + " (" +
@@ -203,7 +204,7 @@ namespace Serpent_Theater_Server.Database
                 }
                 foreach (var actor in actors)
                 {
-                    var databaseActor = _context.Actors.FirstOrDefault(x => x.Name == actor.Name);
+                    var databaseActor = Queryable.FirstOrDefault<Actor>(_context.Actors, x => x.Name == actor.Name);
                     if (databaseActor == null)
                     {
                         actor.Watchables = new List<Watchable>{watchable};
@@ -220,7 +221,7 @@ namespace Serpent_Theater_Server.Database
                 }
                 foreach (var writer in writers)
                 {
-                    var databaseWriter = _context.Writers.FirstOrDefault(x => x.Name == writer.Name);
+                    var databaseWriter = Queryable.FirstOrDefault<Writer>(_context.Writers, x => x.Name == writer.Name);
                     if (databaseWriter == null)
                     {
                         writer.Watchables = new List<Watchable> { watchable };
@@ -237,7 +238,7 @@ namespace Serpent_Theater_Server.Database
                 }
                 foreach (var director in directors)
                 {
-                    var databaseDirector = _context.Directors.FirstOrDefault(x => x.Name == director.Name);
+                    var databaseDirector = Queryable.FirstOrDefault<Director>(_context.Directors, x => x.Name == director.Name);
                     if (databaseDirector == null)
                     {
                         director.Watchables = new List<Watchable> { watchable };
@@ -254,7 +255,7 @@ namespace Serpent_Theater_Server.Database
                 }
                 foreach (var genre in genres)
                 {
-                    var databaseGenre = _context.Genres.FirstOrDefault(x => x.Name == genre.Name);
+                    var databaseGenre = Queryable.FirstOrDefault<Genre>(_context.Genres, x => x.Name == genre.Name);
                     if (databaseGenre == null)
                     {
                         genre.Watchables = new List<Watchable> { watchable };
