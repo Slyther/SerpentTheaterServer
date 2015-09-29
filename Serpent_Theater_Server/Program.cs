@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using DatabaseController.Context;
-using DatabaseController.Entities;
-using Microsoft.Win32;
 using Ninject;
-using Serpent_Theater_Server.FTP;
 
 namespace Serpent_Theater_Server
 {

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using DatabaseController.Context;
 using DatabaseController.Entities;
 using DatabaseController.Interfaces;
@@ -12,7 +9,7 @@ namespace DatabaseController.Repositories
 {
     public class SeasonsRepository : ISeasonsRepository
     {
-        private TheaterContext _context;
+        private readonly TheaterContext _context;
 
         public SeasonsRepository(TheaterContext context)
         {
@@ -21,32 +18,40 @@ namespace DatabaseController.Repositories
 
         public Season Create(Season season)
         {
-            throw new NotImplementedException();
+            var seas = _context.Seasons.Add(season);
+            _context.SaveChanges();
+            return seas;
         }
 
         public Season GetById(long id)
         {
-            throw new NotImplementedException();
+            return _context.Seasons.FirstOrDefault(x => x.Id == id);
         }
 
         public Season Update(Season season)
         {
-            throw new NotImplementedException();
+            var seas = _context.Seasons.FirstOrDefault(cp => cp.Id == season.Id);
+            if (seas == null) throw new ArgumentException();
+            _context.Entry(season).State = System.Data.Entity.EntityState.Modified;
+            _context.SaveChanges();
+            return seas;
         }
 
         public Season Delete(long id)
         {
-            throw new NotImplementedException();
+            return Delete(GetById(id));
         }
 
         public Season Delete(Season season)
         {
-            throw new NotImplementedException();
+            var seas = _context.Seasons.Remove(season);
+            _context.SaveChanges();
+            return seas;
         }
 
         public IQueryable<Season> Query(Expression<Func<Season, bool>> expression)
         {
-            throw new NotImplementedException();
+            return _context.Seasons.Where(expression);
         }
     }
 }

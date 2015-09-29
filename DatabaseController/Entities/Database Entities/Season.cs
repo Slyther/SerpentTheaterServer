@@ -4,7 +4,7 @@ namespace DatabaseController.Entities
 {
     public class Season
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public string Plot { get; set; }
         public byte[] Poster { get; set; }

@@ -6,9 +6,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
-using DatabaseController;
-using DatabaseController.Context;
 using DatabaseController.Entities;
+using DatabaseController.Interfaces;
 using Utilities;
 
 namespace Serpent_Theater_Server
@@ -22,12 +21,34 @@ namespace Serpent_Theater_Server
             Both
         }
 
-        private readonly TheaterContext _context;
+        private readonly IActorsRepository _actorsRepository;
+        private readonly IContentPathsRepository _contentPathsRepository;
+        private readonly IDirectorsRepository _directorsRepository;
+        private readonly IEpisodesRepository _episodesRepository;
+        private readonly IGenresRepository _genresRepository;
+        private readonly ISeasonsRepository _seasonsRepository;
+        private readonly ISeriesRepository _seriesRepository;
+        private readonly ISubtitlesRepository _subtitlesRepository;
+        private readonly IWritersRepository _writersRepository;
+        private readonly IMoviesRepository _moviesRepository;
         private readonly MemoryStream _defaultAvatar;
 
-        public OmdbApiHandler(TheaterContext context)
+        public OmdbApiHandler(IActorsRepository actorsRepository, IContentPathsRepository contentPathsRepository,
+            IDirectorsRepository directorsRepository, IEpisodesRepository episodesRepository,
+            IGenresRepository genresRepository, ISeasonsRepository seasonsRepository, ISeriesRepository seriesRepository,
+            ISubtitlesRepository subtitlesRepository, IWritersRepository writersRepository, IMoviesRepository moviesRepository)
         {
-            _context = context;
+            _actorsRepository = actorsRepository;
+            _contentPathsRepository = contentPathsRepository;
+            _directorsRepository = directorsRepository;
+            _episodesRepository = episodesRepository;
+            _genresRepository = genresRepository;
+            _moviesRepository = moviesRepository;
+            _seasonsRepository = seasonsRepository;
+            _seriesRepository = seriesRepository;
+            _subtitlesRepository = subtitlesRepository;
+            _writersRepository = writersRepository;
+
             var image = new Bitmap(Properties.Resources.default_avatar);
             _defaultAvatar = new MemoryStream();
             image.Save(_defaultAvatar, System.Drawing.Imaging.ImageFormat.Png);
@@ -179,7 +200,7 @@ namespace Serpent_Theater_Server
                     {
                         if (actor.Trim() == "")
                             continue;
-                        var act = _context.Actors.FirstOrDefault(x => x.Name == actor.Trim()) ?? new Actor
+                        var act = _actorsRepository.Query(x => x.Name == actor.Trim()).FirstOrDefault() ?? new Actor
                         {
                             Name = actor.Trim()
                         };
@@ -198,7 +219,7 @@ namespace Serpent_Theater_Server
                     {
                         if (director.Trim() == "")
                             continue;
-                        var dir = _context.Directors.FirstOrDefault(x => x.Name == director.Trim()) ?? new Director
+                        var dir = _directorsRepository.Query(x => x.Name == director.Trim()).FirstOrDefault() ?? new Director
                         {
                             Name = director.Trim()
                         };
@@ -217,7 +238,7 @@ namespace Serpent_Theater_Server
                     {
                         if (writer.Trim() == "")
                             continue;
-                        var wri = _context.Writers.FirstOrDefault(x => x.Name == writer.Trim()) ?? new Writer
+                        var wri = _writersRepository.Query(x => x.Name == writer.Trim()).FirstOrDefault() ?? new Writer
                         {
                             Name = writer.Trim()
                         };
@@ -234,7 +255,7 @@ namespace Serpent_Theater_Server
                     var genresList = genresString.Split(',').ToList();
                     foreach (var genre in genresList)
                     {
-                        var gen = Queryable.FirstOrDefault(_context.Genres, x => x.Name == genre.Trim()) ?? new Genre
+                        var gen = _genresRepository.Query(x => x.Name == genre.Trim()).FirstOrDefault() ?? new Genre
                         {
                             Name = genre.Trim()
                         };

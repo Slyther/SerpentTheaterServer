@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using DatabaseController.Context;
 using DatabaseController.Entities;
 using DatabaseController.Interfaces;
@@ -12,7 +9,7 @@ namespace DatabaseController.Repositories
 {
     public class ActorsRepository : IActorsRepository
     {
-        private TheaterContext _context;
+        private readonly TheaterContext _context;
 
         public ActorsRepository(TheaterContext context)
         {
@@ -21,32 +18,40 @@ namespace DatabaseController.Repositories
 
         public Actor Create(Actor actor)
         {
-            throw new NotImplementedException();
+            var ac = _context.Actors.Add(actor);
+            _context.SaveChanges();
+            return ac;
         }
 
         public Actor GetById(long id)
         {
-            throw new NotImplementedException();
+            return _context.Actors.FirstOrDefault(x => x.Id == id);
         }
 
         public Actor Update(Actor actor)
         {
-            throw new NotImplementedException();
+            var ac = _context.Actors.FirstOrDefault(cp => cp.Id == actor.Id);
+            if (ac == null) throw new ArgumentException();
+            _context.Entry(actor).State = System.Data.Entity.EntityState.Modified;
+            _context.SaveChanges();
+            return ac;
         }
 
         public Actor Delete(long id)
         {
-            throw new NotImplementedException();
+            return Delete(GetById(id));
         }
 
         public Actor Delete(Actor actor)
         {
-            throw new NotImplementedException();
+            var ac = _context.Actors.Remove(actor);
+            _context.SaveChanges();
+            return ac;
         }
 
         public IQueryable<Actor> Query(Expression<Func<Actor, bool>> expression)
         {
-            throw new NotImplementedException();
+            return _context.Actors.Where(expression);
         }
     }
 }

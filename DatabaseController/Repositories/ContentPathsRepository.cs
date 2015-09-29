@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using DatabaseController.Context;
 using DatabaseController.Entities;
 using DatabaseController.Interfaces;
@@ -12,7 +9,7 @@ namespace DatabaseController.Repositories
 {
     public class ContentPathsRepository : IContentPathsRepository
     {
-        private TheaterContext _context;
+        private readonly TheaterContext _context;
 
         public ContentPathsRepository(TheaterContext context)
         {
@@ -34,20 +31,15 @@ namespace DatabaseController.Repositories
         public ContentPath Update(ContentPath contentPath)
         {
             var contPath = _context.ContentPaths.FirstOrDefault(cp => cp.Id == contentPath.Id);
-            if (contPath != null)
-            {
-                contPath.Path = contentPath.Path;
-                contPath.ContentType = contentPath.ContentType;
-                _context.SaveChanges();
-                return contPath;
-            }
-            throw new ArgumentException(); 
+            if (contPath == null) throw new ArgumentException();
+            _context.Entry(contentPath).State = System.Data.Entity.EntityState.Modified;
+            _context.SaveChanges();
+            return contPath;
         }
 
         public ContentPath Delete(long id)
         {
-            var path = Delete(GetById(id));
-            return path;
+            return Delete(GetById(id));
         }
 
         public ContentPath Delete(ContentPath contentPath)

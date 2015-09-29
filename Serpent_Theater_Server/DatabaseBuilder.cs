@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DatabaseController;
-using DatabaseController.Context;
 using DatabaseController.Entities;
+using DatabaseController.Interfaces;
 using Utilities;
 
 namespace Serpent_Theater_Server
@@ -23,13 +22,36 @@ namespace Serpent_Theater_Server
             Series,
             Season
         }
-        private readonly TheaterContext _context;
+
+        private readonly IActorsRepository _actorsRepository;
+        private readonly IContentPathsRepository _contentPathsRepository;
+        private readonly IDirectorsRepository _directorsRepository;
+        private readonly IEpisodesRepository _episodesRepository;
+        private readonly IGenresRepository _genresRepository;
+        private readonly ISeasonsRepository _seasonsRepository;
+        private readonly ISeriesRepository _seriesRepository;
+        private readonly ISubtitlesRepository _subtitlesRepository;
+        private readonly IWritersRepository _writersRepository;
+        private readonly IMoviesRepository _moviesRepository;
         private readonly OmdbApiHandler _omdbApiHandler;
 
-        public DatabaseBuilder(TheaterContext context)
+        public DatabaseBuilder(IActorsRepository actorsRepository, IContentPathsRepository contentPathsRepository, 
+            IDirectorsRepository directorsRepository, IEpisodesRepository episodesRepository, 
+            IGenresRepository genresRepository, ISeasonsRepository seasonsRepository, ISeriesRepository seriesRepository, 
+            ISubtitlesRepository subtitlesRepository, IWritersRepository writersRepository, 
+            IMoviesRepository moviesRepository, OmdbApiHandler omdbApiHandler)
         {
-            _context = context;
-            _omdbApiHandler = new OmdbApiHandler(_context);
+            _actorsRepository = actorsRepository;
+            _contentPathsRepository = contentPathsRepository;
+            _directorsRepository = directorsRepository;
+            _episodesRepository = episodesRepository;
+            _genresRepository = genresRepository;
+            _seasonsRepository = seasonsRepository;
+            _seriesRepository = seriesRepository;
+            _subtitlesRepository = subtitlesRepository;
+            _writersRepository = writersRepository;
+            _moviesRepository = moviesRepository;
+            _omdbApiHandler = omdbApiHandler;
         }
 
 
@@ -57,7 +79,7 @@ namespace Serpent_Theater_Server
                         name = name.Remove(name.LastIndexOf('(')).Trim();
                         year = year.Remove(year.IndexOf(')')).Trim();
                         name = name.Replace("310 to Yuma", "3:10 to Yuma"); //Hardcoded, can't figure out any other way. Unique case.
-                        var movie = _context.Movies.FirstOrDefault(x => x.Title == name && x.Year == year);
+                        var movie = _moviesRepository.Query(x => x.Title == name && x.Year == year).FirstOrDefault();
                         if (movie != null)
                         {
                             BasicLogger.Log("Conflicting entry: " + name + " (" + year + ")", Verbosity.Warning);
@@ -127,7 +149,7 @@ namespace Serpent_Theater_Server
                             BasicLogger.Log("Something went wrong with: " + name + " (" + year + ")", Verbosity.Error);
                             continue;
                         }
-                        movie = _context.Movies.FirstOrDefault(x => x.ImdbId == obtainedMovie.ImdbId);
+                        movie = _moviesRepository.Query(x => x.ImdbId == obtainedMovie.ImdbId).FirstOrDefault();
                         if (movie != null)
                         {
                             BasicLogger.Log("Conflicting entries: " + name + " (" + year + "), " + movie.Title + " (" +
@@ -162,8 +184,7 @@ namespace Serpent_Theater_Server
                 watchable.Writers.Clear();
                 watchable.Directors.Clear();
                 watchable.Genres.Clear();
-                _context.Movies.Add((Movie)watchable);
-                _context.SaveChanges();
+                _moviesRepository.Create((Movie)watchable);
                 foreach (var file in files)
                 {
                     if (file.EndsWith("srt"))
@@ -179,83 +200,82 @@ namespace Serpent_Theater_Server
                                 Path = file,
                                 Watchable = watchable
                             };
-                            _context.Subtitles.Add(subs);
-                            _context.SaveChanges();
+                            _subtitlesRepository.Create(subs);
                         }
                     }
                     else if (file.EndsWith("mp4") || file.EndsWith("avi") || file.EndsWith("mkv") || file.EndsWith("wmv"))
                     {
                         watchable.Path = file;
-                        _context.SaveChanges();
+                        _moviesRepository.Update((Movie)watchable);
                     }
                 }
                 foreach (var actor in actors)
                 {
-                    var databaseActor = _context.Actors.FirstOrDefault(x => x.Name == actor.Name);
+                    var databaseActor = _actorsRepository.Query(x => x.Name == actor.Name).FirstOrDefault();
                     if (databaseActor == null)
                     {
                         actor.Watchables = new List<Watchable>{watchable};
-                        _context.Actors.Add(actor);
+                        _actorsRepository.Create(actor);
                     }
                     else
                     {
                         if(databaseActor.Watchables == null)
                             databaseActor.Watchables = new List<Watchable>();
-                        if (!databaseActor.Watchables.Contains(watchable))
-                            databaseActor.Watchables.Add(watchable);
+                        if (databaseActor.Watchables.Contains(watchable)) continue;
+                        databaseActor.Watchables.Add(watchable);
+                        _actorsRepository.Update(databaseActor);
                     }
-                    _context.SaveChanges();
                 }
                 foreach (var writer in writers)
                 {
-                    var databaseWriter = _context.Writers.FirstOrDefault(x => x.Name == writer.Name);
+                    var databaseWriter = _writersRepository.Query(x => x.Name == writer.Name).FirstOrDefault();
                     if (databaseWriter == null)
                     {
                         writer.Watchables = new List<Watchable> { watchable };
-                        _context.Writers.Add(writer);
+                        _writersRepository.Create(writer);
                     }
                     else
                     {
                         if (databaseWriter.Watchables == null)
                             databaseWriter.Watchables = new List<Watchable>();
-                        if (!databaseWriter.Watchables.Contains(watchable))
-                            databaseWriter.Watchables.Add(watchable);
+                        if (databaseWriter.Watchables.Contains(watchable)) continue;
+                        databaseWriter.Watchables.Add(watchable);
+                        _writersRepository.Update(databaseWriter);
                     }
-                    _context.SaveChanges();
                 }
                 foreach (var director in directors)
                 {
-                    var databaseDirector = _context.Directors.FirstOrDefault(x => x.Name == director.Name);
+                    var databaseDirector = _directorsRepository.Query(x => x.Name == director.Name).FirstOrDefault();
                     if (databaseDirector == null)
                     {
                         director.Watchables = new List<Watchable> { watchable };
-                        _context.Directors.Add(director);
+                        _directorsRepository.Create(director);
                     }
                     else
                     {
                         if (databaseDirector.Watchables == null)
                             databaseDirector.Watchables = new List<Watchable>();
-                        if(!databaseDirector.Watchables.Contains(watchable))
-                            databaseDirector.Watchables.Add(watchable);
+                        if (databaseDirector.Watchables.Contains(watchable)) continue;
+                        databaseDirector.Watchables.Add(watchable);
+                        _directorsRepository.Update(databaseDirector);
                     }
-                    _context.SaveChanges();
                 }
                 foreach (var genre in genres)
                 {
-                    var databaseGenre = _context.Genres.FirstOrDefault(x => x.Name == genre.Name);
+                    var databaseGenre = _genresRepository.Query(x => x.Name == genre.Name).FirstOrDefault();
                     if (databaseGenre == null)
                     {
                         genre.Watchables = new List<Watchable> { watchable };
-                        _context.Genres.Add(genre);
+                        _genresRepository.Create(genre);
                     }
                     else
                     {
                         if (databaseGenre.Watchables == null)
                             databaseGenre.Watchables = new List<Watchable>();
-                        if (!databaseGenre.Watchables.Contains(watchable))
-                            databaseGenre.Watchables.Add(watchable);
+                        if (databaseGenre.Watchables.Contains(watchable)) continue;
+                        databaseGenre.Watchables.Add(watchable);
+                        _genresRepository.Update(databaseGenre);
                     }
-                    _context.SaveChanges();
                 }
             }
         }

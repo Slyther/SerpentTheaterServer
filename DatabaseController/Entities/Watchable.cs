@@ -5,7 +5,7 @@ namespace DatabaseController.Entities
 {
     public class Watchable
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string ImdbId { get; set; }
         public string Title { get; set; }
         public string Year { get; set; }

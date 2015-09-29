@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using DatabaseController.Context;
 using DatabaseController.Entities;
 using DatabaseController.Interfaces;
@@ -12,7 +9,7 @@ namespace DatabaseController.Repositories
 {
     public class SeriesRepository : ISeriesRepository
     {
-        private TheaterContext _context;
+        private readonly TheaterContext _context;
 
         public SeriesRepository(TheaterContext context)
         {
@@ -21,32 +18,40 @@ namespace DatabaseController.Repositories
 
         public Series Create(Series series)
         {
-            throw new NotImplementedException();
+            var sers = _context.Series.Add(series);
+            _context.SaveChanges();
+            return sers;
         }
 
         public Series GetById(long id)
         {
-            throw new NotImplementedException();
+            return _context.Series.FirstOrDefault(x => x.Id == id);
         }
 
         public Series Update(Series series)
         {
-            throw new NotImplementedException();
+            var sers = _context.Series.FirstOrDefault(cp => cp.Id == series.Id);
+            if (sers == null) throw new ArgumentException();
+            _context.Entry(series).State = System.Data.Entity.EntityState.Modified;
+            _context.SaveChanges();
+            return sers;
         }
 
         public Series Delete(long id)
         {
-            throw new NotImplementedException();
+            return Delete(GetById(id));
         }
 
         public Series Delete(Series series)
         {
-            throw new NotImplementedException();
+            var sers = _context.Series.Remove(series);
+            _context.SaveChanges();
+            return sers;
         }
 
         public IQueryable<Series> Query(Expression<Func<Series, bool>> expression)
         {
-            throw new NotImplementedException();
+            return _context.Series.Where(expression);
         }
     }
 }

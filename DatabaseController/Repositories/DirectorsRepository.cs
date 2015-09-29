@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using DatabaseController.Context;
 using DatabaseController.Entities;
 using DatabaseController.Interfaces;
@@ -12,7 +9,7 @@ namespace DatabaseController.Repositories
 {
     public class DirectorsRepository : IDirectorsRepository
     {
-        private TheaterContext _context;
+        private readonly TheaterContext _context;
 
         public DirectorsRepository(TheaterContext context)
         {
@@ -21,32 +18,40 @@ namespace DatabaseController.Repositories
 
         public Director Create(Director director)
         {
-            throw new NotImplementedException();
+            var dir = _context.Directors.Add(director);
+            _context.SaveChanges();
+            return dir;
         }
 
         public Director GetById(long id)
         {
-            throw new NotImplementedException();
+            return _context.Directors.FirstOrDefault(x => x.Id == id);
         }
 
         public Director Update(Director director)
         {
-            throw new NotImplementedException();
+            var dir = _context.Directors.FirstOrDefault(cp => cp.Id == director.Id);
+            if (dir == null) throw new ArgumentException();
+            _context.Entry(director).State = System.Data.Entity.EntityState.Modified;
+            _context.SaveChanges();
+            return dir;
         }
 
         public Director Delete(long id)
         {
-            throw new NotImplementedException();
+            return Delete(GetById(id));
         }
 
         public Director Delete(Director director)
         {
-            throw new NotImplementedException();
+            var dir = _context.Directors.Remove(director);
+            _context.SaveChanges();
+            return dir;
         }
 
         public IQueryable<Director> Query(Expression<Func<Director, bool>> expression)
         {
-            throw new NotImplementedException();
+            return _context.Directors.Where(expression);
         }
     }
 }

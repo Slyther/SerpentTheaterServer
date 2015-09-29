@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using DatabaseController.Context;
 using DatabaseController.Entities;
 using DatabaseController.Interfaces;
@@ -12,7 +9,7 @@ namespace DatabaseController.Repositories
 {
     public class EpisodesRepository : IEpisodesRepository
     {
-        private TheaterContext _context;
+        private readonly TheaterContext _context;
 
         public EpisodesRepository(TheaterContext context)
         {
@@ -21,32 +18,40 @@ namespace DatabaseController.Repositories
 
         public Episode Create(Episode episode)
         {
-            throw new NotImplementedException();
+            var ep = _context.Episodes.Add(episode);
+            _context.SaveChanges();
+            return ep;
         }
 
         public Episode GetById(long id)
         {
-            throw new NotImplementedException();
+            return _context.Episodes.FirstOrDefault(x => x.Id == id);
         }
 
         public Episode Update(Episode episode)
         {
-            throw new NotImplementedException();
+            var ep = _context.Episodes.FirstOrDefault(cp => cp.Id == episode.Id);
+            if (ep == null) throw new ArgumentException();
+            _context.Entry(episode).State = System.Data.Entity.EntityState.Modified;
+            _context.SaveChanges();
+            return ep;
         }
 
         public Episode Delete(long id)
         {
-            throw new NotImplementedException();
+            return Delete(GetById(id));
         }
 
         public Episode Delete(Episode episode)
         {
-            throw new NotImplementedException();
+            var ep = _context.Episodes.Remove(episode);
+            _context.SaveChanges();
+            return ep;
         }
 
         public IQueryable<Episode> Query(Expression<Func<Episode, bool>> expression)
         {
-            throw new NotImplementedException();
+            return _context.Episodes.Where(expression);
         }
     }
 }

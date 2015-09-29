@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using DatabaseController.Context;
 using DatabaseController.Entities;
 using DatabaseController.Interfaces;
@@ -12,7 +9,7 @@ namespace DatabaseController.Repositories
 {
     public class GenresRepository : IGenresRepository
     {
-        private TheaterContext _context;
+        private readonly TheaterContext _context;
 
         public GenresRepository(TheaterContext context)
         {
@@ -21,32 +18,40 @@ namespace DatabaseController.Repositories
 
         public Genre Create(Genre genre)
         {
-            throw new NotImplementedException();
+            var gen = _context.Genres.Add(genre);
+            _context.SaveChanges();
+            return gen;
         }
 
         public Genre GetById(long id)
         {
-            throw new NotImplementedException();
+            return _context.Genres.FirstOrDefault(x => x.Id == id);
         }
 
         public Genre Update(Genre genre)
         {
-            throw new NotImplementedException();
+            var gen = _context.Genres.FirstOrDefault(cp => cp.Id == genre.Id);
+            if (gen == null) throw new ArgumentException();
+            _context.Entry(genre).State = System.Data.Entity.EntityState.Modified;
+            _context.SaveChanges();
+            return gen;
         }
 
         public Genre Delete(long id)
         {
-            throw new NotImplementedException();
+            return Delete(GetById(id));
         }
 
         public Genre Delete(Genre genre)
         {
-            throw new NotImplementedException();
+            var gen = _context.Genres.Remove(genre);
+            _context.SaveChanges();
+            return gen;
         }
 
         public IQueryable<Genre> Query(Expression<Func<Genre, bool>> expression)
         {
-            throw new NotImplementedException();
+            return _context.Genres.Where(expression);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace DatabaseController.Entities
 {
     public class Genre
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public List<Watchable> Watchables { get; set; }
     }
