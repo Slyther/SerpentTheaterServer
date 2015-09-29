@@ -66,6 +66,7 @@
     <Compile Include="Context\TheaterContext.cs" />
     <Compile Include="Entities\CompleteWatchable.cs" />
     <Compile Include="Entities\Database Entities\Actor.cs" />
+    <Compile Include="Entities\Database Entities\ContentPath.cs" />
     <Compile Include="Entities\Database Entities\Director.cs" />
     <Compile Include="Entities\Database Entities\Episode.cs" />
     <Compile Include="Entities\Database Entities\Genre.cs" />
