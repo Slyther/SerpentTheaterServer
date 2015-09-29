@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.IO;
 using DatabaseController.Context;
 using Ninject;
+using Serpent_Theater_Server.Handlers;
 
 namespace Serpent_Theater_Server
 {

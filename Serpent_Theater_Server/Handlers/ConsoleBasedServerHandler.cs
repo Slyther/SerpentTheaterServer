@@ -9,7 +9,7 @@ using DatabaseController.Interfaces;
 using Microsoft.Win32;
 using Serpent_Theater_Server.FTP;
 
-namespace Serpent_Theater_Server
+namespace Serpent_Theater_Server.Handlers
 {
     public class ConsoleBasedServerHandler
     {

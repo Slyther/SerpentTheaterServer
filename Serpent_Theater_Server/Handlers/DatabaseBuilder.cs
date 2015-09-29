@@ -7,7 +7,7 @@ using DatabaseController.Entities;
 using DatabaseController.Interfaces;
 using Utilities;
 
-namespace Serpent_Theater_Server
+namespace Serpent_Theater_Server.Handlers
 {
     public class DatabaseBuilder
     {
