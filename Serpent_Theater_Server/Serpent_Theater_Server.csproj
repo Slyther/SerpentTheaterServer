@@ -82,15 +82,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bindings.cs" />
-    <Compile Include="ConsoleBasedServerHandler.cs" />
-    <Compile Include="DatabaseBuilder.cs" />
     <Compile Include="FTP\ClientConnection.cs" />
     <Compile Include="FTP\FtpServer.cs" />
     <Compile Include="FTP\LogEntry.cs" />
     <Compile Include="FTP\RateLimitingStream.cs" />
     <Compile Include="FTP\User.cs" />
     <Compile Include="FTP\UserStore.cs" />
-    <Compile Include="OmdbApiHandler.cs" />
+    <Compile Include="Handlers\ConsoleBasedServerHandler.cs" />
+    <Compile Include="Handlers\DatabaseBuilder.cs" />
+    <Compile Include="Handlers\OmdbApiHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
