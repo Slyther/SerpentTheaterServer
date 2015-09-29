@@ -23,34 +23,20 @@ namespace Serpent_Theater_Server
             Series,
             Season
         }
-
-        private readonly string _path;
-        private readonly DatabaseBuilderType _type;
         private readonly TheaterContext _context;
         private readonly OmdbApiHandler _omdbApiHandler;
 
-        public DatabaseBuilder(string path, DatabaseBuilderType type, TheaterContext context)
+        public DatabaseBuilder(TheaterContext context)
         {
-            _path = path;
-            _type = type;
             _context = context;
             _omdbApiHandler = new OmdbApiHandler(_context);
         }
 
-        public void AddAllMissing()
-        {
-            AddAllMissing(_path);
-        }
 
-        public void AddMissingFromScope(SeriesDatabaseBuilderScope scope = SeriesDatabaseBuilderScope.Series)
-        {
-            AddMissingFromScope(_path, scope);
-        }
-
-        public void AddAllMissing(string path)
+        public void AddAllMissing(string path, DatabaseBuilderType type)
         {
             var files = Directory.GetFileSystemEntries(path).ToList();
-            if (_type == DatabaseBuilderType.Movies)
+            if (type == DatabaseBuilderType.Movies)
             {
                 BasicLogger.Log("Adding all or any missing movies to the database.", Verbosity.Information);
                 BasicLogger.Log("Year of each movie in parentheses is expected to appear on each movie's name. Directory will otherwise be ignored.", Verbosity.Information);
@@ -148,7 +134,7 @@ namespace Serpent_Theater_Server
                                             movie.Year + ")", Verbosity.Warning);
                             continue;
                         }
-                        UpdateDatabaseWithWatchable(obtainedMovie, file);
+                        UpdateDatabaseWithWatchable(obtainedMovie, type, file);
                     }
                     else
                     {
@@ -163,9 +149,9 @@ namespace Serpent_Theater_Server
             throw new NotImplementedException();
         }
 
-        private void UpdateDatabaseWithWatchable(CompleteWatchable watchable, string path = "")
+        private void UpdateDatabaseWithWatchable(CompleteWatchable watchable, DatabaseBuilderType type, string path = "")
         {
-            if (_type == DatabaseBuilderType.Movies)
+            if (type == DatabaseBuilderType.Movies)
             {
                 var files = Directory.GetFileSystemEntries(path).ToList();
                 var actors = new List<Actor>(watchable.Actors);

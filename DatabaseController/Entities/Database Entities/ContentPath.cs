@@ -7,7 +7,7 @@
     }
     public class ContentPath
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Path { get; set; }
         public ContentType ContentType { get; set; }
     }

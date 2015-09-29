@@ -13,7 +13,7 @@ namespace DatabaseController.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201509290034486_NewMigration"; }
+            get { return "201509290729294_NewMigration"; }
         }
         
         string IMigrationMetadata.Source

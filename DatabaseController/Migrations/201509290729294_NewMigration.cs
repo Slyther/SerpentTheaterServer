@@ -98,6 +98,16 @@ namespace DatabaseController.Migrations
                 .Index(t => t.SeriesId);
             
             CreateTable(
+                "dbo.ContentPaths",
+                c => new
+                    {
+                        Id = c.Long(nullable: false, identity: true),
+                        Path = c.String(),
+                        ContentType = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.WatchableActors",
                 c => new
                     {
@@ -179,6 +189,7 @@ namespace DatabaseController.Migrations
             DropTable("dbo.GenreWatchables");
             DropTable("dbo.DirectorWatchables");
             DropTable("dbo.WatchableActors");
+            DropTable("dbo.ContentPaths");
             DropTable("dbo.Seasons");
             DropTable("dbo.Subtitles");
             DropTable("dbo.Writers");
