@@ -6,8 +6,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
-using DatabaseDeployer.Database;
-using Utilities.Utils;
+using DatabaseController;
+using DatabaseController.Context;
+using DatabaseController.Entities;
+using Utilities;
 
 namespace Serpent_Theater_Server
 {
@@ -119,14 +121,14 @@ namespace Serpent_Theater_Server
                 var rootNode = doc.SelectSingleNode("root");
                 if (rootNode == null)
                 {
-                    BasicLogger.Log("Something went wrong while obtaining rootnode from document for " + requestUrls.ElementAt(i));
+                    BasicLogger.Log("Something went wrong while obtaining rootnode from document for " + requestUrls.ElementAt(i).Clone(), Verbosity.Error);
                     requestUrls.Remove(requestUrls.ElementAt(i));
                     i = -1;
                     continue;
                 }
                 if (rootNode.Attributes != null && rootNode.Attributes.GetNamedItem("response").Value == "False")
                 {
-                    BasicLogger.Log("Invalid Identifier for " + requestUrls.ElementAt(i));
+                    BasicLogger.Log("Invalid Identifier for " + requestUrls.ElementAt(i), Verbosity.Error);
                     requestUrls.Remove(requestUrls.ElementAt(i));
                     i = -1;
                     continue;
@@ -134,7 +136,7 @@ namespace Serpent_Theater_Server
                 var docNode = rootNode.SelectSingleNode("movie");
                 if (docNode == null)
                 {
-                    BasicLogger.Log("Empty XML for " + requestUrls.ElementAt(i));
+                    BasicLogger.Log("Empty XML for " + requestUrls.ElementAt(i), Verbosity.Error);
                     requestUrls.Remove(requestUrls.ElementAt(i));
                     i = -1;
                     continue;
@@ -147,7 +149,7 @@ namespace Serpent_Theater_Server
                 if (xmlAttributeCollection == null) continue;
                 if (xmlAttributeCollection.GetNamedItem("type").Value != "movie")
                 {
-                    BasicLogger.Log("Element "+xmlAttributeCollection.GetNamedItem("imdbID").Value+" is not a movie!");
+                    BasicLogger.Log("Element "+xmlAttributeCollection.GetNamedItem("imdbID").Value+" is not a movie!", Verbosity.Warning);
                     continue;
                 }
                 if (i == 0)
@@ -177,7 +179,7 @@ namespace Serpent_Theater_Server
                     {
                         if (actor.Trim() == "")
                             continue;
-                        var act = Queryable.FirstOrDefault<Actor>(_context.Actors, x => x.Name == actor.Trim()) ?? new Actor
+                        var act = _context.Actors.FirstOrDefault(x => x.Name == actor.Trim()) ?? new Actor
                         {
                             Name = actor.Trim()
                         };
@@ -196,7 +198,7 @@ namespace Serpent_Theater_Server
                     {
                         if (director.Trim() == "")
                             continue;
-                        var dir = Queryable.FirstOrDefault<Director>(_context.Directors, x => x.Name == director.Trim()) ?? new Director
+                        var dir = _context.Directors.FirstOrDefault(x => x.Name == director.Trim()) ?? new Director
                         {
                             Name = director.Trim()
                         };
@@ -215,7 +217,7 @@ namespace Serpent_Theater_Server
                     {
                         if (writer.Trim() == "")
                             continue;
-                        var wri = Queryable.FirstOrDefault<Writer>(_context.Writers, x => x.Name == writer.Trim()) ?? new Writer
+                        var wri = _context.Writers.FirstOrDefault(x => x.Name == writer.Trim()) ?? new Writer
                         {
                             Name = writer.Trim()
                         };
@@ -232,7 +234,7 @@ namespace Serpent_Theater_Server
                     var genresList = genresString.Split(',').ToList();
                     foreach (var genre in genresList)
                     {
-                        var gen = Queryable.FirstOrDefault<Genre>(_context.Genres, x => x.Name == genre.Trim()) ?? new Genre
+                        var gen = Queryable.FirstOrDefault(_context.Genres, x => x.Name == genre.Trim()) ?? new Genre
                         {
                             Name = genre.Trim()
                         };

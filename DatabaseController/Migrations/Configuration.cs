@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using DatabaseDeployer.Database;
-using DatabaseDeployer.Database.Models;
+using DatabaseController.Context;
 using System;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using DatabaseController.Entities;
 
-namespace DatabaseDeployer.Migrations
+namespace DatabaseController.Migrations
 {
     public sealed class Configuration : DbMigrationsConfiguration<TheaterContext>
     {

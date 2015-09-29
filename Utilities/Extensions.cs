@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Utilities.Utils
+namespace Utilities
 {
     public static class Extensions
     {

@@ -4,10 +4,10 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using DatabaseDeployer.Database;
+using DatabaseController.Context;
+using DatabaseController.Entities;
 using Microsoft.Win32;
 using Serpent_Theater_Server.FTP;
-using Utilities.Utils;
 
 namespace Serpent_Theater_Server
 {
@@ -38,7 +38,7 @@ namespace Serpent_Theater_Server
             Movie movie;
             do
             {
-                Console.Write("Movie Name:");
+                Console.Write(@"Movie Name:");
                 string movieName = Console.ReadLine();
                 movie = Context.Movies.FirstOrDefault(x => x.Title == movieName);
                 if (movie != null)
@@ -59,13 +59,13 @@ namespace Serpent_Theater_Server
                     }
                     catch (Exception exception)
                     {
-                        Console.WriteLine("Exception caught in process: {0}",
+                        Console.WriteLine(@"Exception caught in process: {0}",
                                           exception);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Invalid movie name!");
+                    Console.WriteLine(@"Invalid movie name!");
                 }
             } while (movie == null);
         }
@@ -145,7 +145,7 @@ namespace Serpent_Theater_Server
         {
             Console.WriteLine(Environment.NewLine + @"List of Available Commands:" + Environment.NewLine);
             var commandsList = CommandsDictionary.Select(keyValuePair => new[] {keyValuePair.Key, "- "+keyValuePair.Value.Item2+"\n"}).ToList();
-            Console.WriteLine(Utilities.Utils.Utilities.PadElementsInLines(commandsList));
+            Console.WriteLine(Utilities.Utilities.PadElementsInLines(commandsList));
         }
 
         private static void DisableAutoStartOnLogin()
@@ -176,7 +176,7 @@ namespace Serpent_Theater_Server
                 Directory.CreateDirectory(directory);
             }
             AppDomain.CurrentDomain.SetData("DataDirectory", directory);
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<TheaterContext, DatabaseDeployer.Migrations.Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<TheaterContext, DatabaseController.Migrations.Configuration>());
             Context = new TheaterContext();
             Context.Database.Initialize(true);
             Server = new FtpServer();

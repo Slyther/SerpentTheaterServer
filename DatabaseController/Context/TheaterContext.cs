@@ -1,7 +1,8 @@
 ﻿using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using DatabaseController.Entities;
 
-namespace DatabaseDeployer.Database
+namespace DatabaseController.Context
 {
     public class TheaterContext : DbContext
     {

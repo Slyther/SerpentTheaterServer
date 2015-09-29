@@ -94,7 +94,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -124,9 +126,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DatabaseDeployer\DatabaseDeployer.csproj">
+    <ProjectReference Include="..\DatabaseController\DatabaseController.csproj">
       <Project>{a87ab4e3-7602-4241-a227-e85e6511206d}</Project>
-      <Name>DatabaseDeployer</Name>
+      <Name>DatabaseController</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{5c09733e-d0fc-4bab-8c20-1886bd326920}</Project>

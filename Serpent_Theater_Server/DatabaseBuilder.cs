@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DatabaseDeployer.Database;
-using DatabaseDeployer.Database.Models;
-using Utilities.Utils;
+using DatabaseController;
+using DatabaseController.Context;
+using DatabaseController.Entities;
+using Utilities;
 
 namespace Serpent_Theater_Server
 {
@@ -51,9 +52,9 @@ namespace Serpent_Theater_Server
             var files = Directory.GetFileSystemEntries(path).ToList();
             if (_type == DatabaseBuilderType.Movies)
             {
-                BasicLogger.Log("Adding all or any missing movies to the database.");
-                BasicLogger.Log("Year of each movie in parentheses is expected to appear on each movie's name. Directory will otherwise be ignored.");
-                BasicLogger.Log("Accurate Movie Name is expected for each directory. Movie will not be added otherwise.");
+                BasicLogger.Log("Adding all or any missing movies to the database.", Verbosity.Information);
+                BasicLogger.Log("Year of each movie in parentheses is expected to appear on each movie's name. Directory will otherwise be ignored.", Verbosity.Information);
+                BasicLogger.Log("Accurate Movie Name is expected for each directory. Movie will not be added otherwise.", Verbosity.Information);
                 foreach (var file in files)
                 {
                     FileAttributes attr = File.GetAttributes(file);
@@ -70,10 +71,10 @@ namespace Serpent_Theater_Server
                         name = name.Remove(name.LastIndexOf('(')).Trim();
                         year = year.Remove(year.IndexOf(')')).Trim();
                         name = name.Replace("310 to Yuma", "3:10 to Yuma"); //Hardcoded, can't figure out any other way. Unique case.
-                        var movie = Queryable.FirstOrDefault<Movie>(_context.Movies, x => x.Title == name && x.Year == year);
+                        var movie = _context.Movies.FirstOrDefault(x => x.Title == name && x.Year == year);
                         if (movie != null)
                         {
-                            BasicLogger.Log("Conflicting entry: " + name + " (" + year + ")");
+                            BasicLogger.Log("Conflicting entry: " + name + " (" + year + ")", Verbosity.Warning);
                             continue;
                         }
                         var obtainedMovieTask = _omdbApiHandler.GetRequestedMovie(name, year: year);
@@ -95,7 +96,7 @@ namespace Serpent_Theater_Server
                                 if (obtainedMovieToCheck == null)
                                     throw new Exception();
                                 BasicLogger.Log(name + " was searched for without the year (" + year +
-                                                "). Please confirm entry.");
+                                                "). Please confirm entry.", Verbosity.Warning);
                             }
                             catch (Exception)
                             {
@@ -124,11 +125,11 @@ namespace Serpent_Theater_Server
                                     {
                                         Task.WaitAll(obtainedMovieTask);
                                         BasicLogger.Log(name + " was searched for without the year (" + year +
-                                                        "). Please confirm entry.");
+                                                        "). Please confirm entry.", Verbosity.Warning);
                                     }
                                     catch (Exception ex)
                                     {
-                                        BasicLogger.Log(ex.Message + " " + name + " (" + year + ")");
+                                        BasicLogger.Log(ex.Message + " " + name + " (" + year + ")", Verbosity.Error);
                                         continue;
                                     }
                                 }
@@ -137,21 +138,21 @@ namespace Serpent_Theater_Server
                         var obtainedMovie = obtainedMovieTask.Result;
                         if (obtainedMovie == null)
                         {
-                            BasicLogger.Log("Something went wrong with: " + name + " (" + year + ")");
+                            BasicLogger.Log("Something went wrong with: " + name + " (" + year + ")", Verbosity.Error);
                             continue;
                         }
-                        movie = Queryable.FirstOrDefault<Movie>(_context.Movies, x => x.ImdbId == obtainedMovie.ImdbId);
+                        movie = _context.Movies.FirstOrDefault(x => x.ImdbId == obtainedMovie.ImdbId);
                         if (movie != null)
                         {
                             BasicLogger.Log("Conflicting entries: " + name + " (" + year + "), " + movie.Title + " (" +
-                                            movie.Year + ")");
+                                            movie.Year + ")", Verbosity.Warning);
                             continue;
                         }
                         UpdateDatabaseWithWatchable(obtainedMovie, file);
                     }
                     else
                     {
-                        BasicLogger.Log("Skipped: " + name);
+                        BasicLogger.Log("Skipped: " + name, Verbosity.Warning);
                     }
                 }
             }
@@ -183,7 +184,7 @@ namespace Serpent_Theater_Server
                     {
                         if (files.Count > 2)
                             BasicLogger.Log(watchable.Title +
-                                              "'s subtitles not added due to more than 2 files being present in the directory.");
+                                              "'s subtitles not added due to more than 2 files being present in the directory.", Verbosity.Error);
                         else
                         {
                             var subs = new Subtitles
@@ -204,7 +205,7 @@ namespace Serpent_Theater_Server
                 }
                 foreach (var actor in actors)
                 {
-                    var databaseActor = Queryable.FirstOrDefault<Actor>(_context.Actors, x => x.Name == actor.Name);
+                    var databaseActor = _context.Actors.FirstOrDefault(x => x.Name == actor.Name);
                     if (databaseActor == null)
                     {
                         actor.Watchables = new List<Watchable>{watchable};
@@ -221,7 +222,7 @@ namespace Serpent_Theater_Server
                 }
                 foreach (var writer in writers)
                 {
-                    var databaseWriter = Queryable.FirstOrDefault<Writer>(_context.Writers, x => x.Name == writer.Name);
+                    var databaseWriter = _context.Writers.FirstOrDefault(x => x.Name == writer.Name);
                     if (databaseWriter == null)
                     {
                         writer.Watchables = new List<Watchable> { watchable };
@@ -238,7 +239,7 @@ namespace Serpent_Theater_Server
                 }
                 foreach (var director in directors)
                 {
-                    var databaseDirector = Queryable.FirstOrDefault<Director>(_context.Directors, x => x.Name == director.Name);
+                    var databaseDirector = _context.Directors.FirstOrDefault(x => x.Name == director.Name);
                     if (databaseDirector == null)
                     {
                         director.Watchables = new List<Watchable> { watchable };
@@ -255,7 +256,7 @@ namespace Serpent_Theater_Server
                 }
                 foreach (var genre in genres)
                 {
-                    var databaseGenre = Queryable.FirstOrDefault<Genre>(_context.Genres, x => x.Name == genre.Name);
+                    var databaseGenre = _context.Genres.FirstOrDefault(x => x.Name == genre.Name);
                     if (databaseGenre == null)
                     {
                         genre.Watchables = new List<Watchable> { watchable };

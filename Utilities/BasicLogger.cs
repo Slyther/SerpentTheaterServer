@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Utilities.Utils
+namespace Utilities
 {
     public enum Verbosity
     {
@@ -14,7 +14,7 @@ namespace Utilities.Utils
     {
         private static bool _inUse;
         private static int _logFileNumber = 1;
-        public static void Log(string message)
+        public static void Log(string message, Verbosity verbosity)
         {
             if (!_inUse)
             {
@@ -42,16 +42,16 @@ namespace Utilities.Utils
                 _inUse = true;
                 using (var file = new StreamWriter(@".\Logs\Log_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + _logFileNumber + ".txt"))
                 {
-                    Console.WriteLine(DateTime.Now + @": " + message);
-                    file.WriteLine(DateTime.Now + ": " + message);
+                    Console.WriteLine(verbosity.ToString("G").ToUpperInvariant() + ": " + DateTime.Now + ": "+ message);
+                    file.WriteLine(verbosity.ToString("G").ToUpperInvariant() + ": " + DateTime.Now + ": " + message);
                 }
             }
             else
             {
                 using (var file = File.AppendText(@".\Logs\Log_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + _logFileNumber + ".txt"))
                 {
-                    Console.WriteLine(DateTime.Now + @": " + message);
-                    file.WriteLine(DateTime.Now + ": " + message);
+                    Console.WriteLine(verbosity.ToString("G").ToUpperInvariant() + ": " + DateTime.Now + ": " + message);
+                    file.WriteLine(verbosity.ToString("G").ToUpperInvariant() + ": " + DateTime.Now + ": " + message);
                 }
             }
         }

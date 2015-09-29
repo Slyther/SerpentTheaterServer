@@ -7,8 +7,8 @@
     <ProjectGuid>{A87AB4E3-7602-4241-A227-E85E6511206D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DatabaseDeployer</RootNamespace>
-    <AssemblyName>DatabaseDeployer</AssemblyName>
+    <RootNamespace>DatabaseController</RootNamespace>
+    <AssemblyName>DatabaseController</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -63,22 +63,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\Database Entities\Actor.cs" />
-    <Compile Include="Database\Database Entities\Director.cs" />
-    <Compile Include="Database\Database Entities\Episode.cs" />
-    <Compile Include="Database\Database Entities\Genre.cs" />
-    <Compile Include="Database\Database Entities\Movie.cs" />
-    <Compile Include="Database\Database Entities\Season.cs" />
-    <Compile Include="Database\Database Entities\Series.cs" />
-    <Compile Include="Database\Database Entities\Subtitles.cs" />
-    <Compile Include="Database\Database Entities\Writer.cs" />
-    <Compile Include="Database\Models\CompleteWatchable.cs" />
-    <Compile Include="Database\Models\Individual.cs" />
-    <Compile Include="Database\Models\Watchable.cs" />
-    <Compile Include="Database\TheaterContext.cs" />
-    <Compile Include="Migrations\201509280015327_FirstMigration.cs" />
-    <Compile Include="Migrations\201509280015327_FirstMigration.Designer.cs">
-      <DependentUpon>201509280015327_FirstMigration.cs</DependentUpon>
+    <Compile Include="Context\TheaterContext.cs" />
+    <Compile Include="Entities\CompleteWatchable.cs" />
+    <Compile Include="Entities\Database Entities\Actor.cs" />
+    <Compile Include="Entities\Database Entities\Director.cs" />
+    <Compile Include="Entities\Database Entities\Episode.cs" />
+    <Compile Include="Entities\Database Entities\Genre.cs" />
+    <Compile Include="Entities\Database Entities\Movie.cs" />
+    <Compile Include="Entities\Database Entities\Season.cs" />
+    <Compile Include="Entities\Database Entities\Series.cs" />
+    <Compile Include="Entities\Database Entities\Subtitles.cs" />
+    <Compile Include="Entities\Database Entities\Writer.cs" />
+    <Compile Include="Entities\Individual.cs" />
+    <Compile Include="Entities\Watchable.cs" />
+    <Compile Include="Migrations\201509290034486_NewMigration.cs" />
+    <Compile Include="Migrations\201509290034486_NewMigration.Designer.cs">
+      <DependentUpon>201509290034486_NewMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,9 +111,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201509280015327_FirstMigration.resx">
-      <DependentUpon>201509280015327_FirstMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201509290034486_NewMigration.resx">
+      <DependentUpon>201509290034486_NewMigration.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repositories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

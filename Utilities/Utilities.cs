@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Utilities.Utils
+namespace Utilities
 {
     public static class Utilities
     {

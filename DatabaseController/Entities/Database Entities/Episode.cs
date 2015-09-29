@@ -1,6 +1,4 @@
-﻿using DatabaseDeployer.Database.Models;
-
-namespace DatabaseDeployer.Database
+﻿namespace DatabaseController.Entities
 {
     public class Episode : CompleteWatchable
     {

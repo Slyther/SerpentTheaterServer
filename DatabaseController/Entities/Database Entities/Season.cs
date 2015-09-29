@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DatabaseDeployer.Database
+namespace DatabaseController.Entities
 {
     public class Season
     {

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using DatabaseDeployer.Database.Models;
 
-namespace DatabaseDeployer.Database
+namespace DatabaseController.Entities
 {
     public class Genre
     {

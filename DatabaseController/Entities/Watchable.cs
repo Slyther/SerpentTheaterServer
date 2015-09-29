@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DatabaseDeployer.Database.Models
+namespace DatabaseController.Entities
 {
     public class Watchable
     {
