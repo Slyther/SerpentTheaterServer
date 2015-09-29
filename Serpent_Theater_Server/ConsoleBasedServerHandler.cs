@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using DatabaseController.Entities;
-using DatabaseController.Handlers;
+using DatabaseController.Interfaces;
 using Microsoft.Win32;
 using Serpent_Theater_Server.FTP;
 
@@ -15,13 +15,36 @@ namespace Serpent_Theater_Server
     {
         public Dictionary<string, Tuple<Action, string>> CommandsDictionary;
         private static FtpServer _ftpServer;
-        private static RepositoriesHandler _repositoriesHandler;
         private readonly DatabaseBuilder _databaseBuilder;
+        private readonly IActorsRepository _actorsRepository;
+        private readonly IContentPathsRepository _contentPathsRepository;
+        private readonly IDirectorsRepository _directorsRepository;
+        private readonly IEpisodesRepository _episodesRepository;
+        private readonly IGenresRepository _genresRepository;
+        private readonly ISeasonsRepository _seasonsRepository;
+        private readonly ISeriesRepository _seriesRepository;
+        private readonly ISubtitlesRepository _subtitlesRepository;
+        private readonly IWritersRepository _writersRepository;
+        private readonly IMoviesRepository _moviesRepository;
 
-        public ConsoleBasedServerHandler(FtpServer ftpServer, RepositoriesHandler repositoriesHandler, DatabaseBuilder databaseBuilder)
+        public ConsoleBasedServerHandler(FtpServer ftpServer, DatabaseBuilder databaseBuilder, IActorsRepository actorsRepository, 
+            IContentPathsRepository contentPathsRepository,
+            IDirectorsRepository directorsRepository, IEpisodesRepository episodesRepository,
+            IGenresRepository genresRepository, ISeasonsRepository seasonsRepository, ISeriesRepository seriesRepository,
+            ISubtitlesRepository subtitlesRepository, IWritersRepository writersRepository, IMoviesRepository moviesRepository)
         {
+            _actorsRepository = actorsRepository;
+            _contentPathsRepository = contentPathsRepository;
+            _directorsRepository = directorsRepository;
+            _episodesRepository = episodesRepository;
+            _genresRepository = genresRepository;
+            _moviesRepository = moviesRepository;
+            _seasonsRepository = seasonsRepository;
+            _seriesRepository = seriesRepository;
+            _subtitlesRepository = subtitlesRepository;
+            _writersRepository = writersRepository;
+
             _ftpServer = ftpServer;
-            _repositoriesHandler = repositoriesHandler;
             _databaseBuilder = databaseBuilder;
             CommandsDictionary = new Dictionary<string, Tuple<Action, string>>
             {
@@ -48,7 +71,7 @@ namespace Serpent_Theater_Server
             {
                 Console.Write(@"Movie Name:");
                 string movieName = Console.ReadLine();
-                movie = _repositoriesHandler.MoviesRepository.Query(x => x.Title == movieName).FirstOrDefault();
+                movie = _moviesRepository.Query(x => x.Title == movieName).FirstOrDefault();
                 if (movie != null)
                 {
                     var poster = movie.Poster;
@@ -80,7 +103,7 @@ namespace Serpent_Theater_Server
 
         public void ListMoviesDirectories()
         {
-            var moviesList = _repositoriesHandler.ContentPathsRepository.Query(x => x.ContentType == ContentType.Movies).ToList();
+            var moviesList = _contentPathsRepository.Query(x => x.ContentType == ContentType.Movies).ToList();
             if (!moviesList.Any())
             {
                 Console.WriteLine(@"No movie directories stored!");
@@ -112,10 +135,10 @@ namespace Serpent_Theater_Server
         public void RemoveFromMoviesDirectories()
         {
             Console.WriteLine(@"Enter the path ID:");
-            var id = Int64.Parse(Console.ReadLine());
             try
             {
-                _repositoriesHandler.ContentPathsRepository.Delete(id);
+                var id = Int64.Parse(Console.ReadLine());
+                _contentPathsRepository.Delete(id);
             }
             catch (Exception)
             {
@@ -134,12 +157,12 @@ namespace Serpent_Theater_Server
                 ContentType = ContentType.Movies,
                 Path = path
             };
-            if (_repositoriesHandler.ContentPathsRepository.Query(x => x.Path == path).FirstOrDefault() != null)
+            if (_contentPathsRepository.Query(x => x.Path == path).FirstOrDefault() != null)
             {
                 Console.WriteLine(@"Path already exists!");
                 return;
             }
-            _repositoriesHandler.ContentPathsRepository.Create(contentPath);
+            _contentPathsRepository.Create(contentPath);
             Console.WriteLine(@"Path added!");
         }
 

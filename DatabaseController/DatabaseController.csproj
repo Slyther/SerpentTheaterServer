@@ -81,7 +81,6 @@
     <Compile Include="Entities\Database Entities\Writer.cs" />
     <Compile Include="Entities\Individual.cs" />
     <Compile Include="Entities\Watchable.cs" />
-    <Compile Include="Handlers\RepositoriesHandler.cs" />
     <Compile Include="Interfaces\IActorsRepository.cs" />
     <Compile Include="Interfaces\IContentPathsRepository.cs" />
     <Compile Include="Interfaces\IDirectorsRepository.cs" />
@@ -140,6 +139,9 @@
     <EmbeddedResource Include="Migrations\201509290729294_NewMigration.resx">
       <DependentUpon>201509290729294_NewMigration.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Handlers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

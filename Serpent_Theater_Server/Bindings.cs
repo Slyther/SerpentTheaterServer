@@ -1,5 +1,4 @@
 ﻿using DatabaseController.Context;
-using DatabaseController.Handlers;
 using DatabaseController.Interfaces;
 using DatabaseController.Repositories;
 using Ninject.Modules;
@@ -14,7 +13,6 @@ namespace Serpent_Theater_Server
             Bind<ConsoleBasedServerHandler>().ToSelf();
             Bind<TheaterContext>().ToSelf();
             Bind<FtpServer>().ToSelf();
-            Bind<RepositoriesHandler>().ToSelf();
             Bind<DatabaseBuilder>().ToSelf();
             Bind<IActorsRepository>().To<ActorsRepository>();
             Bind<IContentPathsRepository>().To<ContentPathsRepository>();
