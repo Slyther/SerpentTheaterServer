@@ -150,7 +150,7 @@ namespace Serpent_Theater_Server
 
         private static void DisableAutoStartOnLogin()
         {
-            var key = Registry.CurrentUser.OpenSubKey(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
+            var key = Registry.CurrentUser.OpenSubKey(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
             if (key != null && key.GetValue("SerpentTheaterServer") != null)
             {
                 key.DeleteValue("SerpentTheaterServer");
@@ -159,7 +159,7 @@ namespace Serpent_Theater_Server
 
         private static void SetAutoStartOnLogin()
         {
-            var key = Registry.CurrentUser.OpenSubKey(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
+            var key = Registry.CurrentUser.OpenSubKey(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
             if (key != null && (key.GetValue("SerpentTheaterServer") == null || 
                 (string)key.GetValue("SerpentTheaterServer") != System.Reflection.Assembly.GetEntryAssembly().Location))
             {
@@ -170,7 +170,6 @@ namespace Serpent_Theater_Server
         private static void Main()
         {
             DoInitMessage();
-            BasicLogger.Log("example");
             var directory = AppDomain.CurrentDomain.BaseDirectory + "Database";
             if (!Directory.Exists(directory))
             {

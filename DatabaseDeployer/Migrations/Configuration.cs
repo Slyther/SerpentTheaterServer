@@ -17,6 +17,8 @@ namespace DatabaseDeployer.Migrations
 
         protected override void Seed(TheaterContext context)
         {
+            if (context.Movies.Any())
+                return;
             var episode = new Episode
             {
                 Title = "Test Title",

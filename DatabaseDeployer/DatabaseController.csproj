@@ -63,20 +63,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\Database Models\Actor.cs" />
-    <Compile Include="Database\Database Models\Director.cs" />
-    <Compile Include="Database\Database Models\Episode.cs" />
-    <Compile Include="Database\Database Models\Genre.cs" />
-    <Compile Include="Database\Database Models\Movie.cs" />
-    <Compile Include="Database\Database Models\Season.cs" />
-    <Compile Include="Database\Database Models\Series.cs" />
-    <Compile Include="Database\Database Models\Subtitles.cs" />
-    <Compile Include="Database\Database Models\Writer.cs" />
+    <Compile Include="Database\Database Entities\Actor.cs" />
+    <Compile Include="Database\Database Entities\Director.cs" />
+    <Compile Include="Database\Database Entities\Episode.cs" />
+    <Compile Include="Database\Database Entities\Genre.cs" />
+    <Compile Include="Database\Database Entities\Movie.cs" />
+    <Compile Include="Database\Database Entities\Season.cs" />
+    <Compile Include="Database\Database Entities\Series.cs" />
+    <Compile Include="Database\Database Entities\Subtitles.cs" />
+    <Compile Include="Database\Database Entities\Writer.cs" />
     <Compile Include="Database\Models\CompleteWatchable.cs" />
     <Compile Include="Database\Models\Individual.cs" />
     <Compile Include="Database\Models\Watchable.cs" />
     <Compile Include="Database\TheaterContext.cs" />
-    <Compile Include="Database\TheaterContextInitializer.cs" />
     <Compile Include="Migrations\201509280015327_FirstMigration.cs" />
     <Compile Include="Migrations\201509280015327_FirstMigration.Designer.cs">
       <DependentUpon>201509280015327_FirstMigration.cs</DependentUpon>
