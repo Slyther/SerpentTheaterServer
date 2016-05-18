@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Threading;
 using DatabaseController.Entities;
 using DatabaseController.Interfaces;
 using Microsoft.Win32;
@@ -27,11 +30,12 @@ namespace Serpent_Theater_Server.Handlers
         private readonly IWritersRepository _writersRepository;
         private readonly IMoviesRepository _moviesRepository;
 
-        public ConsoleBasedServerHandler(FtpServer ftpServer, DatabaseBuilder databaseBuilder, IActorsRepository actorsRepository, 
-            IContentPathsRepository contentPathsRepository,
-            IDirectorsRepository directorsRepository, IEpisodesRepository episodesRepository,
-            IGenresRepository genresRepository, ISeasonsRepository seasonsRepository, ISeriesRepository seriesRepository,
-            ISubtitlesRepository subtitlesRepository, IWritersRepository writersRepository, IMoviesRepository moviesRepository)
+        public ConsoleBasedServerHandler(DatabaseBuilder databaseBuilder, IActorsRepository actorsRepository, 
+            IContentPathsRepository contentPathsRepository, IDirectorsRepository directorsRepository, 
+            IEpisodesRepository episodesRepository, IGenresRepository genresRepository, 
+            ISeasonsRepository seasonsRepository, ISeriesRepository seriesRepository, 
+            ISubtitlesRepository subtitlesRepository, IWritersRepository writersRepository, 
+            IMoviesRepository moviesRepository, FtpServer ftpServer)
         {
             _actorsRepository = actorsRepository;
             _contentPathsRepository = contentPathsRepository;
@@ -43,7 +47,6 @@ namespace Serpent_Theater_Server.Handlers
             _seriesRepository = seriesRepository;
             _subtitlesRepository = subtitlesRepository;
             _writersRepository = writersRepository;
-
             _ftpServer = ftpServer;
             _databaseBuilder = databaseBuilder;
             CommandsDictionary = new Dictionary<string, Tuple<Action, string>>
@@ -101,35 +104,24 @@ namespace Serpent_Theater_Server.Handlers
             } while (movie == null);
         }
 
-        public void ListMoviesDirectories()
+        public void ExitServer()
         {
-            var moviesList = _contentPathsRepository.Query(x => x.ContentType == ContentType.Movies).ToList();
-            if (!moviesList.Any())
-            {
-                Console.WriteLine(@"No movie directories stored!");
-                return;
-            }
-            Console.WriteLine(Environment.NewLine + @"List of Movie Directories" + Environment.NewLine);
-            var commandsList = moviesList.Select(keyValuePair => new[] { keyValuePair.Id.ToString(), "- " + keyValuePair.Path + "\n" }).ToList();
-            Console.WriteLine(Utilities.Utilities.PadElementsInLines(commandsList));
+            if (_ftpServer.IsActive())
+                ShutDownServer();
+            Environment.Exit(0);
         }
 
         public void AddAllOrNewMovies()
         {
             var watch = new Stopwatch();
             watch.Start();
-            _databaseBuilder.AddAllMissing("", DatabaseBuilder.DatabaseBuilderType.Movies);
+            var pathsList = _contentPathsRepository.Query(x => x.ContentType == ContentType.Movies);
+            foreach (var contentPath in pathsList)
+            {
+                _databaseBuilder.AddAllMissing(contentPath.Path, DatabaseBuilder.DatabaseBuilderType.Movies);
+            }
             watch.Stop();
-            Console.WriteLine(watch.Elapsed.ToString());
-            Console.ReadLine();
-            throw new NotImplementedException();
-        }
-
-        public void ExitServer()
-        {
-            if (_ftpServer.IsActive())
-                ShutDownServer();
-            Environment.Exit(0);
+            Console.WriteLine(@"Done adding movies. Time elapsed: " + watch.Elapsed);
         }
 
         public void RemoveFromMoviesDirectories()
@@ -166,6 +158,20 @@ namespace Serpent_Theater_Server.Handlers
             Console.WriteLine(@"Path added!");
         }
 
+        public void ListMoviesDirectories()
+        {
+            var moviesList = _contentPathsRepository.Query(x => x.ContentType == ContentType.Movies).ToList();
+            if (!moviesList.Any())
+            {
+                Console.WriteLine(@"No movie directories stored!");
+                return;
+            }
+            Console.WriteLine(Environment.NewLine + @"List of Movie Directories" + Environment.NewLine);
+            var commandsList = moviesList.Select(keyValuePair => new[] { keyValuePair.Id.ToString(CultureInfo.InvariantCulture)
+                , "- " + keyValuePair.Path + "\n" }).ToList();
+            Console.WriteLine(Utilities.Utilities.PadElementsInLines(commandsList));
+        }
+
         public void DisplayServerStatus()
         {
             Console.WriteLine(_ftpServer.IsActive() ? @"Server running at port 21" : @"Server not running.");
@@ -174,6 +180,7 @@ namespace Serpent_Theater_Server.Handlers
         public void RestartServer()
         {
             ShutDownServer();
+            Thread.Sleep(500);
             InitializaServer();
         }
 
